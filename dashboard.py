@@ -30,8 +30,11 @@ def get_series(scp_code):
     return math.ceil(num/1000)
 
 pd.set_option('display.max_colwidth', None)
-path = kagglehub.dataset_download("czzzzzzz/scp1to7")
-df = pd.read_csv(f"{path}/scp6999.csv")
+
+#TODO set back to download after development
+#path = kagglehub.dataset_download("czzzzzzz/scp1to7")
+#df = pd.read_csv(f"{path}/scp6999.csv")
+df = pd.read_csv("scp6999.csv")
 
 df["class type"] = df["text"].apply(get_class_type)
 df["class"] = df["text"].apply(get_class_spec)
@@ -92,18 +95,24 @@ def make_figures(bleh): #input is currently ignored
     primary_classes=["Safe", "Euclid", "Keter"]
     primary_classes_df = df[df["class"].isin(primary_classes)]
     class_counts = primary_classes_df.groupby(["class", "series"]).count().reset_index()
-    x_data = class_counts["class"]
-    y_data = class_counts["code"]
-    color_data = class_counts["series"]
+    x_data = class_counts["class"].tolist()
+    y_data = class_counts["code"].tolist()
+    color_data = class_counts["series"].tolist()
+    data = {"class": x_data,
+            "total SCPs": y_data,
+            "series": color_data}
+    hist_df = pd.DataFrame(data)
+    fig1 = px.histogram(hist_df, x="class", y="total SCPs", color="series", color_discrete_sequence=px.colors.sequential.Plasma_r, barmode="group",
+                      title="Distribution of SCPs by containment class by series")
+    #fig1 = px.histogram(x=x_data, y=y_data, color=color_data, color_discrete_sequence=px.colors.sequential.Plasma_r, barmode="group",
+    #                  title="Distribution of SCPs by containment class by series")
+    fig1.update_layout(yaxis_title="")
+    fig1.update_layout(xaxis_title="class")
+    fig1.update_traces(hovertemplate='Total SCPs: %{y}<extra></extra>')
+
+    
     graph1 = dcc.Graph(
-    #    figure=px.histogram(df, x=x_data, y=y_data, color=color_data, barmode="group"),
-    #    figure=px.histogram(df, x="class", template=TEMPLATE), #works somehow
-    #    figure=px.histogram(class_counts, x="class", y="code", color="series", color_discrete_sequence=px.colors.sequential.Plasma_r, barmode="group",
-    #              title="Distribution of SCPs by containment class by series", template=TEMPLATE),
-        figure = px.histogram(x=x_data, y=y_data, color=color_data, color_discrete_sequence=px.colors.sequential.Plasma_r, barmode="group",
-                  title="Distribution of SCPs by containment class by series"),
-    #    figure = px.histogram(class_counts, x="class", y="code", color="series", color_discrete_sequence=px.colors.sequential.Plasma_r, barmode="group",
-    #              title="Distribution of SCPs by containment class by series"),
+        figure = fig1,
         className="border",
     )
     graph2 = dcc.Graph(
