@@ -80,37 +80,21 @@ mode_select = dcc.Dropdown(options=season_select_list, value = 0, id='dashboard-
     Input(component_id='dashboard-mode', component_property='value')
 )
 def make_figures(current_mode):
-    #graph1 = dcc.Graph(
-    #    figure=px.scatter(
-    #        iris,
-    #        x="sepal_width",
-    #        y="sepal_length",
-    #        color="species",
-    #        title=f"Iris <br>{TEMPLATE} figure template",
-    #        template=TEMPLATE,
-    #    ),
-    #    className="border",
-    #)
     # Graph 1 : Distribution of SCPs by containment class by series ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
     primary_classes=["Safe", "Euclid", "Keter"]
     primary_classes_df = df[df["class"].isin(primary_classes)]
+    title1 = "Distribution of SCPs by containment class by series"
+    ytitle1 = ""
+    if current_mode == 2:
+        title1 = "Bigness and roundness"
+        ytitle1 = "Big"
     class_counts = primary_classes_df.groupby(["class", "series"]).count().reset_index()
-    x_data = class_counts["class"].tolist()
-    y_data = class_counts["code"].tolist()
-    color_data = class_counts["series"].tolist()
-    data = {"class": x_data,
-            "total SCPs": y_data,
-            "series": color_data}
-    hist_df = pd.DataFrame(data)
-    #fig1 = px.histogram(hist_df, x="class", y="total SCPs", color="series", color_discrete_sequence=px.colors.sequential.Plasma_r, barmode="group",
-    #                  title="Distribution of SCPs by containment class by series")
     fig1 = px.histogram(class_counts, x="class", y="code", color="series", color_discrete_sequence=px.colors.sequential.Plasma_r, barmode="group",
-                  title="Distribution of SCPs by containment class by series")
+                  title=title1, template=TEMPLATE)
     fig1.update_xaxes(categoryorder="array", categoryarray=primary_classes)
-    fig1.update_layout(yaxis_title="")
+    fig1.update_layout(yaxis_title=ytitle1)
     fig1.update_layout(xaxis_title="class")
     fig1.update_traces(hovertemplate='Total SCPs: %{y}<extra></extra>')
-
     
     graph1 = dcc.Graph(
         figure = fig1,
