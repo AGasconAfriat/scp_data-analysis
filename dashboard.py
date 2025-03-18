@@ -80,22 +80,35 @@ mode_select = dcc.Dropdown(options=season_select_list, value = 0, id='dashboard-
     Input(component_id='dashboard-mode', component_property='value')
 )
 def make_figures(current_mode):
+    #pd.options.mode.copy_on_write = True
     # Graph 1 : Distribution of SCPs by containment class by series ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
     primary_classes=["Safe", "Euclid", "Keter"]
     primary_classes_df = df[df["class"].isin(primary_classes)]
-    title1 = "Distribution of SCPs by containment class by series"
-    ytitle1 = ""
-    if current_mode == 2:
+    if current_mode != 2:
+        title1 = "Distribution of SCPs by containment class by series"
+        ytitle1 = ""
+        hovertempl1 = "Total SCPs: %{y}<extra></extra>"
+        xtitle1 = "class"
+    else:
         title1 = "Bigness and roundness"
-        ytitle1 = "Big"
+        ytitle1 = "Bigness"
+        hovertempl1 = "Total bigness: %{y} big<extra></extra>"
+        xtitle1 = "Roundness"
+        is_safe = (primary_classes_df["class"] == "Safe")
+        is_euclid = (primary_classes_df["class"] == "Euclid")
+        is_keter = (primary_classes_df["class"] == "Keter")
+        primary_classes_df.loc[is_safe, "class"] = "Big round"
+        primary_classes_df.loc[is_euclid, "class"] = "Round"
+        primary_classes_df.loc[is_keter, "class"] = "Kind of round"
+        primary_classes=["Big round", "Round", "Kind of round"]
     class_counts = primary_classes_df.groupby(["class", "series"]).count().reset_index()
     fig1 = px.histogram(class_counts, x="class", y="code", color="series", color_discrete_sequence=px.colors.sequential.Plasma_r, barmode="group",
                   title=title1, template=TEMPLATE)
     fig1.update_xaxes(categoryorder="array", categoryarray=primary_classes)
     fig1.update_layout(yaxis_title=ytitle1)
-    fig1.update_layout(xaxis_title="class")
-    fig1.update_traces(hovertemplate='Total SCPs: %{y}<extra></extra>')
-    
+    fig1.update_layout(xaxis_title=xtitle1)
+    fig1.update_traces(hovertemplate=hovertempl1)
+
     graph1 = dcc.Graph(
         figure = fig1,
         className="border",
