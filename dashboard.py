@@ -102,10 +102,11 @@ def make_figures(current_mode):
             "total SCPs": y_data,
             "series": color_data}
     hist_df = pd.DataFrame(data)
-    fig1 = px.histogram(hist_df, x="class", y="total SCPs", color="series", color_discrete_sequence=px.colors.sequential.Plasma_r, barmode="group",
-                      title="Distribution of SCPs by containment class by series")
-    #fig1 = px.histogram(x=x_data, y=y_data, color=color_data, color_discrete_sequence=px.colors.sequential.Plasma_r, barmode="group",
+    #fig1 = px.histogram(hist_df, x="class", y="total SCPs", color="series", color_discrete_sequence=px.colors.sequential.Plasma_r, barmode="group",
     #                  title="Distribution of SCPs by containment class by series")
+    fig1 = px.histogram(class_counts, x="class", y="code", color="series", color_discrete_sequence=px.colors.sequential.Plasma_r, barmode="group",
+                  title="Distribution of SCPs by containment class by series")
+    fig1.update_xaxes(categoryorder="array", categoryarray=primary_classes)
     fig1.update_layout(yaxis_title="")
     fig1.update_layout(xaxis_title="class")
     fig1.update_traces(hovertemplate='Total SCPs: %{y}<extra></extra>')
