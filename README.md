@@ -52,6 +52,7 @@ python -m pip install pandas dash
 pip install httpx==0.20 dash plotly
 pip install dash_bootstrap_components
 pip install dash_bootstrap_templates
+pip install kagglehub
 ```
 
 An easy way to see if you are lacking anything is to try to run the script, then install the appropriate package if you get an error message about missing dependencies.
@@ -92,7 +93,7 @@ Example with port 8050:
 
 - [SCP Wiki](https://scp-wiki.wikidot.com/): the home of all things SCP.
 - [SCP 001 to 6999](https://www.kaggle.com/datasets/czzzzzzz/scp1to7/) on Kaggle: the dataset.
-- [Theme demo](https://github.com/AnnMarieW/dash-bootstrap-templates/blob/main/examples/demo_theme_change_4_graphs.py) by Tuomas Poukkula: used to select a theme and copy code snippets.
+- [Theme demo](https://github.com/AnnMarieW/dash-bootstrap-templates/blob/main/examples/demo_theme_change_4_graphs.py) by Tuomas Poukkula: Bootstrap template.
 - [Dash Bootstrap Templates](https://pypi.org/project/dash-bootstrap-templates/0.1.1/)
 - [Plotly Templates](https://plotly.com/python/templates/)
 

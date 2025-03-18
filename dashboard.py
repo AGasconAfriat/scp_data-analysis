@@ -2,6 +2,40 @@ from dash import Dash, dcc, html, Input, Output
 import plotly.express as px
 import dash_bootstrap_components as dbc
 from dash_bootstrap_templates import ThemeChangerAIO, template_from_url
+import kagglehub
+import pandas as pd
+import matplotlib.pyplot as plt
+import math
+import re
+import plotly.graph_objects as go
+import plotly.express as px
+
+def contains_count(string, elements):
+    count = 0
+    for element in elements:
+        count += string.count(element)
+    return count
+def get_class(text):
+    x = re.findall(r"\\n (\w*) Class: (\w*) \\n", text)
+    if x :
+        return(list(x[0]))
+    else:
+        return ["None", "None"]
+def get_class_type(text):
+    return get_class(text)[0]
+def get_class_spec(text):
+    return get_class(text)[1]
+def get_series(scp_code):
+    num = int(scp_code[4:])
+    return math.ceil(num/1000)
+
+pd.set_option('display.max_colwidth', None)
+path = kagglehub.dataset_download("czzzzzzz/scp1to7")
+df = pd.read_csv(f"{path}/scp6999.csv")
+
+df["class type"] = df["text"].apply(get_class_type)
+df["class"] = df["text"].apply(get_class_spec)
+df["series"] = df["code"].apply(get_series)
 
 dbc_css = (
     "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@V1.0.1/dbc.min.css"
@@ -43,15 +77,33 @@ mode_select = dcc.Dropdown(options=season_select_list, value = 0, id='dashboard-
     Input(component_id='dashboard-mode', component_property='value')
 )
 def make_figures(bleh): #input is currently ignored
+    #graph1 = dcc.Graph(
+    #    figure=px.scatter(
+    #        iris,
+    #        x="sepal_width",
+    #        y="sepal_length",
+    #        color="species",
+    #        title=f"Iris <br>{TEMPLATE} figure template",
+    #        template=TEMPLATE,
+    #    ),
+    #    className="border",
+    #)
+    # Graph 1 : Distribution of SCPs by containment class by series ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
+    primary_classes=["Safe", "Euclid", "Keter"]
+    primary_classes_df = df[df["class"].isin(primary_classes)]
+    class_counts = primary_classes_df.groupby(["class", "series"]).count().reset_index()
+    x_data = class_counts["class"]
+    y_data = class_counts["code"]
+    color_data = class_counts["series"]
     graph1 = dcc.Graph(
-        figure=px.scatter(
-            iris,
-            x="sepal_width",
-            y="sepal_length",
-            color="species",
-            title=f"Iris <br>{TEMPLATE} figure template",
-            template=TEMPLATE,
-        ),
+    #    figure=px.histogram(df, x=x_data, y=y_data, color=color_data, barmode="group"),
+    #    figure=px.histogram(df, x="class", template=TEMPLATE), #works somehow
+    #    figure=px.histogram(class_counts, x="class", y="code", color="series", color_discrete_sequence=px.colors.sequential.Plasma_r, barmode="group",
+    #              title="Distribution of SCPs by containment class by series", template=TEMPLATE),
+        figure = px.histogram(x=x_data, y=y_data, color=color_data, color_discrete_sequence=px.colors.sequential.Plasma_r, barmode="group",
+                  title="Distribution of SCPs by containment class by series"),
+    #    figure = px.histogram(class_counts, x="class", y="code", color="series", color_discrete_sequence=px.colors.sequential.Plasma_r, barmode="group",
+    #              title="Distribution of SCPs by containment class by series"),
         className="border",
     )
     graph2 = dcc.Graph(
