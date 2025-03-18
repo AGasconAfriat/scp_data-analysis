@@ -16,7 +16,7 @@ def contains_count(string, elements):
         count += string.count(element)
     return count
 def get_class(text):
-    x = re.findall(r"\\n (\w*) Class: (\w*) \\n", text)
+    x = re.findall(r"\n (\w*) Class: (\w*) \n", text)
     if x :
         return(list(x[0]))
     else:
