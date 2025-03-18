@@ -16,19 +16,15 @@ Famous examples of SCPs include:
 
 ## Project Overview
 
-This project contains files to scrape PWHL player data, save it in a CSV file and display it in the form of a dashboard.
+This project contains a humorous report about SCP-2602, a former library, as well as a script for displaying SCP data in the form of an interactive dashboard.
 
-TODO ![The upper part of a dashboard titled PWHL Player Statistics, featuring a season selection dropdown menu and three charts.](visual_samples/currentseason_top.png)
+TODO add screenshot of dashboard
 
 ## Files
 
 ### Files Showing the Development Process
 
-TODO
-
-* `skater_stats_to_csv.ipynb`: A notebook showing how to create a dataset from PWHL skater statistics and save it as a CSV file.
-* `skater_stats.csv`: A sample CSV file containing PWHL skater statistics.
-* `visualizations.ipynb`: A notebook showing how to create different types of visualizations based on skater statistics.
+* `scp-2602_formerlibrary.ipynb`: An hybrid between exploratory data analysis and a report of humourous "insights" about SCP-2602, which used to be a library.
 
 ### Files Showing the Dashboard
 
@@ -36,13 +32,9 @@ TODO
 
 The `visual_samples` folder contains screen captures of the dashboard.
 
-### Files To Run the Dashboard
+### File to Run the Dashboard
 
-TODO
-
-* `step1_get_stats.py`: A script to scrape the data and save it into a CSV file.
-* `full_stats.csv`: A CSV file generated using `step1_get_stats.py`.
-* `step2_run_dashboard.py`: A script to run the interactive dashboard.
+* `dashboard.py`: A script to run the interactive dashboard.
 
 ## Script Dependencies
 
@@ -57,7 +49,6 @@ pip install setuptools
 python -m pip 
 python -m pip install packaging
 python -m pip install pandas dash
-python -m pip install selenium
 pip install httpx==0.20 dash plotly
 pip install dash_bootstrap_components
 pip install dash_bootstrap_templates
@@ -96,6 +87,14 @@ Example with port 8050:
  * Debug mode: off
  * Running on http://127.0.0.1:8050
 ```
+
+## References
+
+- [SCP Wiki](https://scp-wiki.wikidot.com/): the home of all things SCP.
+- [SCP 001 to 6999](https://www.kaggle.com/datasets/czzzzzzz/scp1to7/) on Kaggle: the dataset.
+- [Theme demo](https://github.com/AnnMarieW/dash-bootstrap-templates/blob/main/examples/demo_theme_change_4_graphs.py) by Tuomas Poukkula: used to select a theme and copy code snippets.
+- [Dash Bootstrap Templates](https://pypi.org/project/dash-bootstrap-templates/0.1.1/)
+- [Plotly Templates](https://plotly.com/python/templates/)
 
 ## TODO
 
