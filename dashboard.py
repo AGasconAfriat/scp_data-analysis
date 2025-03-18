@@ -79,7 +79,7 @@ mode_select = dcc.Dropdown(options=season_select_list, value = 0, id='dashboard-
     Output("graphs", "children"),
     Input(component_id='dashboard-mode', component_property='value')
 )
-def make_figures(bleh): #input is currently ignored
+def make_figures(current_mode):
     #graph1 = dcc.Graph(
     #    figure=px.scatter(
     #        iris,
@@ -115,6 +115,11 @@ def make_figures(bleh): #input is currently ignored
         figure = fig1,
         className="border",
     )
+
+    if current_mode !=2:
+        title2 = f"Gapminder <br>{TEMPLATE} figure template"
+    else:
+        title2 = "Big egg"
     graph2 = dcc.Graph(
         figure=px.scatter(
             gapminder,
@@ -127,7 +132,7 @@ def make_figures(bleh): #input is currently ignored
             animation_group="country",
             log_x=True,
             size_max=60,
-            title=f"Gapminder <br>{TEMPLATE} figure template",
+            title=title2,
             template=TEMPLATE,
         ),
         className="border",
