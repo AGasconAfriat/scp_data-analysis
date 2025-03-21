@@ -120,9 +120,15 @@ def make_figures(current_mode):
     )
 
     # Graph 2 : Overview of SCP article length, rating and mentions in other articles ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
+    # dropping unwanted rows
     ratings_df = df.dropna(subset=["rating"])
     ratings_df = ratings_df[ratings_df["rating"] > 0]
+    # calculating article length
     ratings_df["length"]=ratings_df.apply(lambda row: len(row["text"]), axis=1)
+    # setting anything else than the top 5 classes to "other" to avoid having too many categories
+    top5classes = pd.DataFrame(ratings_df["class"].value_counts()).head(5).reset_index()["class"].tolist()
+    is_top5class = ratings_df["class"].isin(top5classes)
+    ratings_df.loc[-is_top5class, "class"] = "Other"
     
     if current_mode !=2:
         title2 = "Overview of SCP article length, rating and mentions in other articles"
@@ -140,6 +146,7 @@ def make_figures(current_mode):
             hover_name="code",
             animation_frame="series",
             hover_data = {"series":False},
+            category_orders={"class": ["Neutralized", "Thaumiel", "Safe", "Euclid", "Keter", "Other"]},
             log_x=True,
             size_max=60,
             title= title2,
