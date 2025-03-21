@@ -26,7 +26,7 @@ def get_series(scp_code):
     return math.ceil(num/1000)
 def count_mentions(code): #counts mentions of a SCP in the text column of every row except its own
     mentions = 0
-    temp_df = df[df['code'] != code] # remove the SCP's own article so they 
+    temp_df = df[df['code'] != code] # remove the SCP's own article
     for scp_text in temp_df['text']:
         mentions = mentions + scp_text.count(code)
     if code in ["SCP-001", "SCP-6999"]:
