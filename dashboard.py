@@ -205,8 +205,8 @@ app.layout = dbc.Container(
                 dbc.Col(mode_select, lg=2)
             ],
         ),
-        dbc.Row(dbc.Col(html.Div(id="graphs")))
-        dbc.Row(dbc.Col(links)),
+        dbc.Row(dbc.Col(html.Div(id="graphs"))),
+        dbc.Row(dbc.Col(links))
     ],
     className="dbc p-4",
     fluid=True,
