@@ -97,9 +97,9 @@ def make_figures(current_mode):
         xtitle1 = "class"
     else:
         title1 = "Bigness and roundness"
-        ytitle1 = "Bigness"
+        ytitle1 = "bigness"
         hovertempl1 = "Total bigness: %{y} big<extra></extra>"
-        xtitle1 = "Roundness"
+        xtitle1 = "roundness"
         is_safe = (primary_classes_df["class"] == "Safe")
         is_euclid = (primary_classes_df["class"] == "Euclid")
         is_keter = (primary_classes_df["class"] == "Keter")
@@ -152,8 +152,16 @@ def make_figures(current_mode):
     tc_scps = black_df["class"].isin(tclist)
     black_df = black_df[tc_scps]
 
-    graph3 = dcc.Graph(
-        figure=px.violin(
+    if current_mode !=2:
+        title3 = "Quantity of black rectangles (█ character) per article"
+        ytitle3 = "black rectangles"
+        xtitle3 = "class"
+    else:
+        title3 = "Quantity of brown eggs per carton"
+        ytitle3 = "brown eggs"
+        xtitle3 = "roundness"
+
+    fig3 = px.violin(
             black_df,
             y="black rectangles",
             x="class",
@@ -161,11 +169,17 @@ def make_figures(current_mode):
             box=True,
             points="all",
             hover_data={"code":True, "title":True, "class": False, "series": False},
-            title="Amount of black rectangles (█ character) per article",
+            title=title3,
             template=TEMPLATE,
-        ),
+        )
+    fig3.update_layout(yaxis_title=ytitle3)
+    fig3.update_layout(xaxis_title=xtitle3)
+    
+    graph3 = dcc.Graph(
+        figure=fig3,
         className="border",
     )
+    
     graph4 = dcc.Graph(
         figure=px.scatter_mapbox(
             carshare,
