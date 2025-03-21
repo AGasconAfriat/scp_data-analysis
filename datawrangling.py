@@ -39,6 +39,9 @@ def count_mentions(code): #counts mentions of a SCP in the text column of every 
 #df = pd.read_csv(f"{path}/scp6999.csv")
 df = pd.read_csv("scp6999.csv")
 
+# Removing rows corresponding to unassigned SCP codes
+df = df[df["state"]!="deleted"]
+# Adding columns
 df["class type"] = df["text"].apply(get_class_type)
 df["class"] = df["text"].apply(get_class_spec)
 df["series"] = df["code"].apply(get_series)

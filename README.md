@@ -26,7 +26,7 @@ TODO add screenshot of dashboard
 
 * `scp-2602_formerlibrary.ipynb`: An hybrid between exploratory data analysis and a report of humourous "insights" about SCP-2602, which used to be a library.
 * `scp6999.csv`: A dataset containing information about every SCP from the first 7 series.
-* `datawrangling.py`: A script used to add columns to the original dataset.
+* `datawrangling.py`: A script used to add columns and remove rows corresponding to unassigned SCP codes.
 * `visualizations.py`: A script used to manipulate the data and experiment with creating visualizations for the dashboard.
 
 ### Files Showing the Dashboard
