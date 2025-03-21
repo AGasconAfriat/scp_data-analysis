@@ -160,7 +160,13 @@ def make_figures(current_mode):
         title3 = "Quantity of brown eggs per carton"
         ytitle3 = "brown eggs"
         xtitle3 = "roundness"
-
+        is_safe = (black_df["class"] == "Safe")
+        is_euclid = (black_df["class"] == "Euclid")
+        is_keter = (black_df["class"] == "Keter")
+        black_df.loc[is_safe, "class"] = "Big round"
+        black_df.loc[is_euclid, "class"] = "Round"
+        black_df.loc[is_keter, "class"] = "Kind of round"
+        
     fig3 = px.violin(
             black_df,
             y="black rectangles",
@@ -174,6 +180,7 @@ def make_figures(current_mode):
         )
     fig3.update_layout(yaxis_title=ytitle3)
     fig3.update_layout(xaxis_title=xtitle3)
+    fig3.update_xaxes(categoryorder="array", categoryarray=primary_classes)
     
     graph3 = dcc.Graph(
         figure=fig3,
