@@ -136,6 +136,7 @@ def make_figures(current_mode):
             y="mentions",
             size="rating",
             color="class",
+            color_discrete_sequence=px.colors.qualitative.Bold,
             hover_name="code",
             animation_frame="series",
             hover_data = {"series":False},
@@ -171,16 +172,18 @@ def make_figures(current_mode):
         black_df.loc[is_keter, "class"] = "Kind of round"
         
     fig3 = px.violin(
-            black_df,
-            y="black rectangles",
-            x="class",
-            color="series",
-            box=True,
-            points="all",
-            hover_data={"code":True, "title":True, "class": False, "series": False},
-            title=title3,
-            template=TEMPLATE,
-        )
+        black_df,
+        y="black rectangles",
+        x="class",
+        color="series",
+        color_discrete_sequence=px.colors.sequential.Plasma_r,
+        box=True,
+        points="all",
+        hover_data={"code":True, "title":True, "class": False, "series": False},
+        title=title3,
+        template=TEMPLATE,
+    )
+
     fig3.update_layout(yaxis_title=ytitle3)
     fig3.update_layout(xaxis_title=xtitle3)
     fig3.update_xaxes(categoryorder="array", categoryarray=primary_classes)
