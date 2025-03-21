@@ -216,8 +216,8 @@ def make_figures(current_mode):
     top_rated_df["title"] = top_rated_df.apply(lambda row: get_code_plus_title(row["code"], row["title"]), axis=1)
     top_rated_df["rank"] = range(1, len(top_rated_df) + 1)
     top_rated_df.pop("code")
-    top_rated_df.rename(columns={"rating": "amount"}, inplace=True)
-    top_rated_df["category"] = "rating (points)"
+    top_rated_df["amount"] = top_rated_df["amount"]//10
+    top_rated_df["category"] = "rating (tens of points)"
     
     most_refs_df = df.sort_values(by="mentions", ascending=False).head()[["code", "title", "mentions"]]
     most_refs_df["title"] = most_refs_df.apply(lambda row: get_code_plus_title(row["code"], row["title"]), axis=1)
@@ -225,12 +225,18 @@ def make_figures(current_mode):
     most_refs_df.pop("code")
     most_refs_df.rename(columns={"mentions": "amount"}, inplace=True)
     most_refs_df["category"] = "mentions"
-    
+
+    top5classes = pd.DataFrame(df["class"].value_counts()).head(5).reset_index()["class"].tolist()
+    top_classes_df = df[df["class"].isin(top5classes)].groupby("class").count().reset_index()[["class", "code"]].sort_values(by="code", ascending=False)
+    top_classes_df.rename(columns={"class": "title", "code":"amount"}, inplace=True)
+    top_classes_df["category"] = "most common classes (SCP count)"
+    top_classes_df["rank"] = range(1, len(top_rated_df) + 1)
+
     top5_df = pd.DataFrame(columns=['category', 'title', 'amount', 'rank'])
-    top5_df = pd.concat([top5_df, top_rated_df, most_refs_df], ignore_index=True)
+    top5_df = pd.concat([top5_df, top_rated_df, most_refs_df, top_classes_df], ignore_index=True)
 
     fig4 = px.bar(top5_df, x="category", y="amount", color="rank", color_discrete_sequence=px.colors.sequential.Plasma_r, barmode="group",
-                      title="Top5", hover_name="title", template=TEMPLATE)
+                      title="Top 5", hover_name="title", template=TEMPLATE)
     
     graph4 = dcc.Graph(
         figure=fig4,
