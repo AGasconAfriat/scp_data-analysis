@@ -132,26 +132,33 @@ def make_figures(current_mode):
     
     if current_mode !=2:
         title2 = "Overview of SCP article length, rating and mentions in other articles"
+        xtitle2 = "length (in characters)"
+        ytitle2 = "mentions"
     else:
         title2 = "Big egg"
-        
+        xtitle2 = "bigness"
+        ytitle2 = "yolk"
+
+    fig2 = px.scatter(
+        ratings_df.dropna(subset=["rating"]),
+        x="length",
+        y="mentions",
+        size="rating",
+        color="class",
+        color_discrete_sequence=px.colors.qualitative.Bold,
+        hover_name="code",
+        animation_frame="series",
+        hover_data = {"series":False},
+        category_orders={"class": ["Neutralized", "Thaumiel", "Safe", "Euclid", "Keter", "Other"]},
+        log_x=True,
+        size_max=60,
+        title= title2,
+        template=TEMPLATE
+    )
+    fig2.update_layout(xaxis_title=xtitle2)
+    fig2.update_layout(yaxis_title=ytitle2)
     graph2 = dcc.Graph(
-        figure=px.scatter(
-            ratings_df.dropna(subset=["rating"]),
-            x="length",
-            y="mentions",
-            size="rating",
-            color="class",
-            color_discrete_sequence=px.colors.qualitative.Bold,
-            hover_name="code",
-            animation_frame="series",
-            hover_data = {"series":False},
-            category_orders={"class": ["Neutralized", "Thaumiel", "Safe", "Euclid", "Keter", "Other"]},
-            log_x=True,
-            size_max=60,
-            title= title2,
-            template=TEMPLATE,
-        ),
+        figure=fig2,
         className="border",
     )
 
