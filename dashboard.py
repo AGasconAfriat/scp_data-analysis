@@ -16,6 +16,9 @@ def contains_count(string, elements):
         count += string.count(element)
     return count
 
+def get_code_plus_title(code, title):
+    return str(code) + ": " + str(title[1:-1])
+
 pd.set_option('display.max_colwidth', None)
 
 df = pd.read_csv("scp6999augmented.csv")
@@ -206,20 +209,31 @@ def make_figures(current_mode):
         figure=fig3,
         className="border",
     )
+
+    # Graph 4 : Top 5 ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
+
+    top_rated_df = df.sort_values(by="rating", ascending=False).head()[["code", "title", "rating"]]
+    top_rated_df["title"] = top_rated_df.apply(lambda row: get_code_plus_title(row["code"], row["title"]), axis=1)
+    top_rated_df["rank"] = range(1, len(top_rated_df) + 1)
+    top_rated_df.pop("code")
+    top_rated_df.rename(columns={"rating": "amount"}, inplace=True)
+    top_rated_df["category"] = "rating (points)"
+    
+    most_refs_df = df.sort_values(by="mentions", ascending=False).head()[["code", "title", "mentions"]]
+    most_refs_df["title"] = most_refs_df.apply(lambda row: get_code_plus_title(row["code"], row["title"]), axis=1)
+    most_refs_df["rank"] = range(1, len(top_rated_df) + 1)
+    most_refs_df.pop("code")
+    most_refs_df.rename(columns={"mentions": "amount"}, inplace=True)
+    most_refs_df["category"] = "mentions"
+    
+    top5_df = pd.DataFrame(columns=['category', 'title', 'amount', 'rank'])
+    top5_df = pd.concat([top5_df, top_rated_df, most_refs_df], ignore_index=True)
+
+    fig4 = px.bar(top5_df, x="category", y="amount", color="rank", color_discrete_sequence=px.colors.sequential.Plasma_r, barmode="group",
+                      title="Top5", hover_name="title", template=TEMPLATE)
     
     graph4 = dcc.Graph(
-        figure=px.scatter_mapbox(
-            carshare,
-            lat="centroid_lat",
-            lon="centroid_lon",
-            color="peak_hour",
-            size="car_hours",
-            size_max=15,
-            zoom=10,
-            mapbox_style="carto-positron",
-            title=f"Carshare <br> {TEMPLATE} figure template",
-            template=TEMPLATE,
-        ),
+        figure=fig4,
         className="border",
     )
 
