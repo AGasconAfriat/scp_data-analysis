@@ -114,16 +114,18 @@ def make_figures(current_mode):
     fig1.update_layout(yaxis_title=ytitle1)
     fig1.update_layout(xaxis_title=xtitle1)
     fig1.update_traces(hovertemplate=hovertempl1)
-
     graph1 = dcc.Graph(
         figure = fig1,
         className="border",
     )
 
+    # Graph 2 : [...] ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
+    
     if current_mode !=2:
         title2 = f"Gapminder <br>{TEMPLATE} figure template"
     else:
         title2 = "Big egg"
+        
     graph2 = dcc.Graph(
         figure=px.scatter(
             gapminder,
@@ -141,16 +143,25 @@ def make_figures(current_mode):
         ),
         className="border",
     )
+
+    # Graph 3 : [Amount of black rectangles (█) per article] ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
+    black_df = df
+    black_df["black rectangles"] = black_df.apply(lambda row: contains_count(row["text"], ["█"]), axis=1)
+    topclasses = pd.DataFrame(df["class"].value_counts()).head(3).reset_index()
+    tclist = topclasses["class"].tolist()
+    tc_scps = black_df["class"].isin(tclist)
+    black_df = black_df[tc_scps]
+
     graph3 = dcc.Graph(
         figure=px.violin(
-            tips,
-            y="tip",
-            x="smoker",
-            color="sex",
+            black_df,
+            y="black rectangles",
+            x="class",
+            color="series",
             box=True,
             points="all",
-            hover_data=tips.columns,
-            title=f"Tips <br>{TEMPLATE} figure template",
+            hover_data={"code":True, "title":True, "class": False, "series": False},
+            title="Amount of black rectangles (█ character) per article",
             template=TEMPLATE,
         ),
         className="border",
