@@ -25,6 +25,9 @@ TODO add screenshot of dashboard
 ### Files Showing the Development Process
 
 * `scp-2602_formerlibrary.ipynb`: An hybrid between exploratory data analysis and a report of humourous "insights" about SCP-2602, which used to be a library.
+* `scp6999.csv`: A dataset containing information about every SCP from the first 7 series.
+* `datawrangling.py`: A script used to add columns to the original dataset.
+* `visualizations.py`: A script used to manipulate the data and experiment with creating visualizations for the dashboard.
 
 ### Files Showing the Dashboard
 
@@ -32,13 +35,12 @@ TODO
 
 The `visual_samples` folder contains screen captures of the dashboard.
 
-### File to Run the Dashboard
+### Files to Run the Dashboard
 
+* `scp6999augmented.csv`: The dataset.
 * `dashboard.py`: A script to run the interactive dashboard.
 
 ## Script Dependencies
-
-TODO
 
 The scripts require Python to be installed.
 
@@ -57,11 +59,7 @@ pip install kagglehub
 
 An easy way to see if you are lacking anything is to try to run the script, then install the appropriate package if you get an error message about missing dependencies.
 
-`step1_get_stats.py` needs a WebDriver to be installed. Consult [the supported browsers section of the Selenium downloads page](https://www.selenium.dev/downloads/#supported-browsers) for more information. If not using Edge, update line 24 of `step1_get_stats.py` with the appropriate WebDriver.
-
 ## Running a Python script
-
-TODO
 
 To run a script, use the following command:
 
@@ -69,17 +67,9 @@ To run a script, use the following command:
 python <path>/<filename>
 ```
 
-## Running the Scripts and Accessing the Dashboard
+## Accessing the Dashboard
 
-TODO
-
-First, run `step1_get_stats.py`. WebDriver will open and close multiple webpages displaying PWHL player statistics. Wait for the script to end. It will output "Step 1 complete."
-
-**NOTE 1**: It is normal for the script to take a while as it needs to open a large number of webpages (46 at time of writing), waiting for each to load the table, then scraping the data.
-
-**NOTE 2**: You may see a list of WebDriver-related warnings and errors in the console. They should not prevent the script from completing.
-
-Then, run `step2_run_dashboard.py`. Its output should specify which port it is running on.
+Run `dashboard.py`. Its output should specify which port it is running on.
 
 Example with port 8050:
 
