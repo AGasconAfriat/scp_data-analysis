@@ -25,14 +25,12 @@ def get_series(scp_code):
     num = int(scp_code[4:])
     return math.ceil(num/1000)
 def count_mentions(code): #counts mentions of a SCP in the text column of every row except its own
+    links_pattern = r"« \w+-\d+ [|] \w+-\d+ [|] \w+-\d+ »"
     mentions = 0
     temp_df = df[df['code'] != code] # remove the SCP's own article
     for scp_text in temp_df['text']:
+        scp_text = re.sub(links_pattern, "", scp_text)
         mentions = mentions + scp_text.count(code)
-    if code in ["SCP-001", "SCP-6999"]:
-        mentions = mentions -1
-    else:
-        mentions = mentions - 2 # these must be substracted because at the end of each SCP article is a link to the previous and next ones
     return mentions
 
 #path = kagglehub.dataset_download("czzzzzzz/scp1to7")
