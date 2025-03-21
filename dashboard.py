@@ -75,6 +75,32 @@ for num, name in modes.items():
 
 mode_select = dcc.Dropdown(options=season_select_list, value = 0, id='dashboard-mode')
 
+links = html.Div(
+    [
+        html.Label(
+            [
+                html.A(
+                    "SCP Wiki",
+                    href="https://scp-wiki.wikidot.com/",
+                    target="_blank",
+                ),
+                " | ",
+                html.A(
+                    "Antimemetics Division",
+                    href="https://scp-wiki.wikidot.com/antimemetics-division-hub",
+                    target="_blank",
+                ),
+                " | ",
+                html.A(
+                    "SCP-Big egg",
+                    href="https://scp-wiki.wikidot.com/scp-big-egg-j",
+                    target="_blank",
+                ),
+            ]
+        ),
+    ]
+)
+
 @app.callback(
     Output("graphs", "children"),
     Input(component_id='dashboard-mode', component_property='value')
@@ -180,6 +206,7 @@ app.layout = dbc.Container(
             ],
         ),
         dbc.Row(dbc.Col(html.Div(id="graphs")))
+        dbc.Row(dbc.Col(links)),
     ],
     className="dbc p-4",
     fluid=True,
