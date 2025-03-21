@@ -216,6 +216,7 @@ def make_figures(current_mode):
     top_rated_df["title"] = top_rated_df.apply(lambda row: get_code_plus_title(row["code"], row["title"]), axis=1)
     top_rated_df["rank"] = range(1, len(top_rated_df) + 1)
     top_rated_df.pop("code")
+    top_rated_df.rename(columns={"rating": "amount"}, inplace=True)
     top_rated_df["amount"] = top_rated_df["amount"]//10
     top_rated_df["category"] = "rating (tens of points)"
     
