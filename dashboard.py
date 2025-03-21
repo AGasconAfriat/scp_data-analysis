@@ -119,26 +119,29 @@ def make_figures(current_mode):
         className="border",
     )
 
-    # Graph 2 : [...] ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
+    # Graph 2 : Overview of SCP article length, rating and mentions in other articles ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
+    ratings_df = df.dropna(subset=["rating"])
+    ratings_df = ratings_df[ratings_df["rating"] > 0]
+    ratings_df["length"]=ratings_df.apply(lambda row: len(row["text"]), axis=1)
     
     if current_mode !=2:
-        title2 = f"Gapminder <br>{TEMPLATE} figure template"
+        title2 = "Overview of SCP article length, rating and mentions in other articles"
     else:
         title2 = "Big egg"
         
     graph2 = dcc.Graph(
         figure=px.scatter(
-            gapminder,
-            x="gdpPercap",
-            y="lifeExp",
-            size="pop",
-            color="continent",
-            hover_name="country",
-            animation_frame="year",
-            animation_group="country",
+            ratings_df.dropna(subset=["rating"]),
+            x="length",
+            y="mentions",
+            size="rating",
+            color="class",
+            hover_name="code",
+            animation_frame="series",
+            hover_data = {"series":False},
             log_x=True,
             size_max=60,
-            title=title2,
+            title= title2,
             template=TEMPLATE,
         ),
         className="border",
