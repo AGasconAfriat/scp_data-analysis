@@ -2,13 +2,13 @@ from dash import Dash, dcc, html, Input, Output
 import plotly.express as px
 import dash_bootstrap_components as dbc
 from dash_bootstrap_templates import ThemeChangerAIO, template_from_url
-import kagglehub
 import pandas as pd
 import matplotlib.pyplot as plt
 import math
 import re
 import plotly.graph_objects as go
 import plotly.express as px
+import random
 
 def contains_count(string, elements):
     count = 0
@@ -29,13 +29,11 @@ dbc_css = (
     "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@V1.0.1/dbc.min.css"
 )
 
+# modes
+modes = {0: "Default mode", 1: "Antimemetic mode", 2: "Big egg"}
+
 app = Dash(__name__, external_stylesheets=[dbc.themes.DARKLY, dbc_css])
 app.title = "SCP Status"
-
-iris = px.data.iris()
-gapminder = px.data.gapminder()
-tips = px.data.tips()
-carshare = px.data.carshare()
 
 TEMPLATE = template_from_url(dbc.themes.DARKLY)
 
@@ -49,9 +47,6 @@ change_theme = ThemeChangerAIO(
         "color": "success",
     },
 )
-
-# modes
-modes = {0: "Default mode", 1: "Anti-memetic mode", 2: "Big egg"}
 
 # Create list of dropdown menu items
 season_select_list = []
@@ -86,15 +81,12 @@ links = html.Div(
     ]
 )
 
-@app.callback(
-    Output("graphs", "children"),
-    Input(component_id='dashboard-mode', component_property='value')
-)
-def make_figures(current_mode):
-    #pd.options.mode.copy_on_write = True
+def make_figures(current_mode, current_df):
+    #if current_mode != 1:
+    #    current_df = df #resets the df in case antimemetic mode was previously enabled
     # Graph 1 : Distribution of SCPs by containment class by series ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
     primary_classes=["Safe", "Euclid", "Keter"]
-    primary_classes_df = df[df["class"].isin(primary_classes)]
+    primary_classes_df = current_df[current_df["class"].isin(primary_classes)]
     if current_mode != 2:
         title1 = "Distribution of SCPs by containment class by series"
         ytitle1 = ""
@@ -129,7 +121,7 @@ def make_figures(current_mode):
 
     # Graph 2 : Overview of SCP article length, rating and mentions in other articles ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
     # dropping unwanted rows
-    ratings_df = df.dropna(subset=["rating"])
+    ratings_df = current_df.dropna(subset=["rating"])
     ratings_df = ratings_df[ratings_df["rating"] > 0]
     # calculating article length
     ratings_df["length"]=ratings_df.apply(lambda row: len(row["text"]), axis=1)
@@ -184,9 +176,9 @@ def make_figures(current_mode):
     )
 
     # Graph 3 : [Amount of black rectangles (█) per article] ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
-    black_df = df
+    black_df = current_df
     black_df["black rectangles"] = black_df.apply(lambda row: contains_count(row["text"], ["█"]), axis=1)
-    topclasses = pd.DataFrame(df["class"].value_counts()).head(3).reset_index()
+    topclasses = pd.DataFrame(current_df["class"].value_counts()).head(3).reset_index()
     tclist = topclasses["class"].tolist()
     tc_scps = black_df["class"].isin(tclist)
     black_df = black_df[tc_scps]
@@ -233,7 +225,7 @@ def make_figures(current_mode):
 
     # Graph 4 : Top 5 ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 
-    top_rated_df = df.sort_values(by="rating", ascending=False).head()[["full title", "rating"]]
+    top_rated_df = current_df.sort_values(by="rating", ascending=False).head()[["full title", "rating"]]
     top_rated_df["rank"] = range(1, len(top_rated_df) + 1)
     top_rated_df.rename(columns={"rating": "amount", "full title": "title"}, inplace=True)
     top_rated_df["amount"] = top_rated_df["amount"]//10
@@ -244,16 +236,24 @@ def make_figures(current_mode):
     most_refs_df.rename(columns={"mentions": "amount", "full title": "title"}, inplace=True)
     most_refs_df["category"] = "mentions"
     
-    longest_df = df.sort_values(by="length", ascending=False).head()[["full title", "length"]]
+    longest_df = current_df.sort_values(by="length", ascending=False).head()[["full title", "length"]]
     longest_df["rank"] = range(1, len(top_rated_df) + 1)
     longest_df.rename(columns={"length": "amount"}, inplace=True)
     longest_df["amount"] = longest_df["amount"]//100
     longest_df["category"] = "article length (hundreds of characters)"
     longest_df.rename(columns={"full title": "title"}, inplace=True)
-    
+
+    if current_mode == 2:
+        top_rated_df["category"] = "taste rating"
+        most_refs_df["category"] = "culinary uses"
+        longest_df["category"] = "mass (grams)"
+        
     top5_df = pd.DataFrame(columns=['category', 'title', 'amount', 'rank'])
     top5_df = pd.concat([top5_df, top_rated_df, longest_df, most_refs_df], ignore_index=True)
 
+    if current_mode == 2:
+        top5_df["title"] = "SCP-Big egg"
+        
     fig4 = px.bar(top5_df, x="category", y="amount", color="rank", color_discrete_sequence=px.colors.sequential.Plasma_r, barmode="group",
                       title="Top 5", hover_name="title", template=TEMPLATE)
     
@@ -267,17 +267,38 @@ def make_figures(current_mode):
         dbc.Row([dbc.Col(graph3, lg=6), dbc.Col(graph4, lg=6)], className="mt-4"),
     ]
 
+@app.callback(
+    Output("graphs", "children"),
+    [Input(component_id='dashboard-mode', component_property='value'),
+     Input('interval-component', 'n_intervals')]
+)
+def update_dashboard(current_mode, n):
+    if "current_df" not in locals():
+        current_df = df
+    if current_mode != 1: #default or big egg mode
+        if ("last_mode" not in locals()) or (last_mode != current_mode):
+            last_mode = current_mode
+            last_graphs = make_figures(current_mode, df)
+        return last_graphs
+    else: #antimemetic mode
+        to_drop = random.sample(list(current_df.index), math.ceil(len(current_df)/2))
+        current_df.drop(to_drop)
+        return make_figures(current_mode, current_df)
 
 app.layout = dbc.Container(
     [
         dbc.Row(
             [
-                #dbc.Col(change_theme, lg=2),
                 dbc.Col(mode_select, lg=2)
             ],
         ),
         dbc.Row(dbc.Col(html.Div(id="graphs"))),
-        dbc.Row(dbc.Col(links))
+        dbc.Row(dbc.Col(links)),
+        dcc.Interval(
+            id='interval-component',
+            interval=10*1000,  # in milliseconds
+            n_intervals=0
+        )
     ],
     className="dbc p-4",
     fluid=True,
