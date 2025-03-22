@@ -23,6 +23,7 @@ pd.set_option('display.max_colwidth', None)
 
 df = pd.read_csv("scp6999augmented.csv")
 df["length"]=df.apply(lambda row: len(row["text"]), axis=1)
+df["full title"]=df.apply(lambda row: get_code_plus_title(row["code"], row["title"]), axis=1)
 
 dbc_css = (
     "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@V1.0.1/dbc.min.css"
@@ -213,26 +214,16 @@ def make_figures(current_mode):
 
     # Graph 4 : Top 5 ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 
-    top_rated_df = df.sort_values(by="rating", ascending=False).head()[["code", "title", "rating"]]
-    top_rated_df["title"] = top_rated_df.apply(lambda row: get_code_plus_title(row["code"], row["title"]), axis=1)
+    top_rated_df = df.sort_values(by="rating", ascending=False).head()[["full title", "rating"]]
     top_rated_df["rank"] = range(1, len(top_rated_df) + 1)
-    top_rated_df.pop("code")
-    top_rated_df.rename(columns={"rating": "amount"}, inplace=True)
+    top_rated_df.rename(columns={"rating": "amount", "full title": "title"}, inplace=True)
     top_rated_df["amount"] = top_rated_df["amount"]//10
     top_rated_df["category"] = "rating (tens of points)"
     
-    most_refs_df = df.sort_values(by="mentions", ascending=False).head()[["code", "title", "mentions"]]
-    most_refs_df["title"] = most_refs_df.apply(lambda row: get_code_plus_title(row["code"], row["title"]), axis=1)
+    most_refs_df = df.sort_values(by="mentions", ascending=False).head()[["full title", "mentions"]]
     most_refs_df["rank"] = range(1, len(top_rated_df) + 1)
-    most_refs_df.pop("code")
-    most_refs_df.rename(columns={"mentions": "amount"}, inplace=True)
+    most_refs_df.rename(columns={"mentions": "amount", "full title": "title"}, inplace=True)
     most_refs_df["category"] = "mentions"
-    
-    top5classes = pd.DataFrame(df["class"].value_counts()).head(5).reset_index()["class"].tolist()
-    top_classes_df = df[df["class"].isin(top5classes)].groupby("class").count().reset_index()[["class", "code"]].sort_values(by="code", ascending=False)
-    top_classes_df.rename(columns={"class": "title", "code":"amount"}, inplace=True)
-    top_classes_df["category"] = "most common classes (SCP count)"
-    top_classes_df["rank"] = range(1, len(top_rated_df) + 1)
     
     longest_df = df.sort_values(by="length", ascending=False).head()[["code", "title", "length"]]
     longest_df["title"] = longest_df.apply(lambda row: get_code_plus_title(row["code"], row["title"]), axis=1)
