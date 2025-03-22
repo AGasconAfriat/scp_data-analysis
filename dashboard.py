@@ -287,7 +287,7 @@ def update_dashboard(current_mode, n):
         return last_graphs
     else: #antimemetic mode
         # antimemetic mode causes the dashboard to "forget" data progressively until exactly 5 SCPs remain
-        if len(current_df > 10)
+        if len(current_df) > 10:
             to_drop = random.sample(list(current_df.index), math.ceil(len(current_df)/10))
         else:
             to_drop = random.sample(list(current_df.index), len(current_df) - 5)
