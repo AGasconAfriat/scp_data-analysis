@@ -22,6 +22,7 @@ def get_code_plus_title(code, title):
 pd.set_option('display.max_colwidth', None)
 
 df = pd.read_csv("scp6999augmented.csv")
+df["length"]=df.apply(lambda row: len(row["text"]), axis=1)
 
 dbc_css = (
     "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@V1.0.1/dbc.min.css"
@@ -226,15 +227,23 @@ def make_figures(current_mode):
     most_refs_df.pop("code")
     most_refs_df.rename(columns={"mentions": "amount"}, inplace=True)
     most_refs_df["category"] = "mentions"
-
+    
     top5classes = pd.DataFrame(df["class"].value_counts()).head(5).reset_index()["class"].tolist()
     top_classes_df = df[df["class"].isin(top5classes)].groupby("class").count().reset_index()[["class", "code"]].sort_values(by="code", ascending=False)
     top_classes_df.rename(columns={"class": "title", "code":"amount"}, inplace=True)
     top_classes_df["category"] = "most common classes (SCP count)"
     top_classes_df["rank"] = range(1, len(top_rated_df) + 1)
-
+    
+    longest_df = df.sort_values(by="length", ascending=False).head()[["code", "title", "length"]]
+    longest_df["title"] = longest_df.apply(lambda row: get_code_plus_title(row["code"], row["title"]), axis=1)
+    longest_df["rank"] = range(1, len(top_rated_df) + 1)
+    longest_df.pop("code")
+    longest_df.rename(columns={"length": "amount"}, inplace=True)
+    longest_df["amount"] = longest_df["amount"]//100
+    longest_df["category"] = "article length (hundreds of characters)"
+    
     top5_df = pd.DataFrame(columns=['category', 'title', 'amount', 'rank'])
-    top5_df = pd.concat([top5_df, top_rated_df, most_refs_df, top_classes_df], ignore_index=True)
+    top5_df = pd.concat([top5_df, top_rated_df, longest_df, most_refs_df], ignore_index=True)
 
     fig4 = px.bar(top5_df, x="category", y="amount", color="rank", color_discrete_sequence=px.colors.sequential.Plasma_r, barmode="group",
                       title="Top 5", hover_name="title", template=TEMPLATE)
