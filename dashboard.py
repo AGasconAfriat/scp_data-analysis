@@ -142,10 +142,23 @@ def make_figures(current_mode):
         title2 = "Overview of SCP article length, rating and mentions in other articles"
         xtitle2 = "length (in characters)"
         ytitle2 = "mentions"
+        hover_data2 = {"series": False}
     else:
         title2 = "Big egg"
         xtitle2 = "bigness"
         ytitle2 = "yolk"
+        is_safe = (ratings_df["class"] == "Safe")
+        is_euclid = (ratings_df["class"] == "Euclid")
+        is_keter = (ratings_df["class"] == "Keter")
+        is_neut = (ratings_df["class"] == "Neutralized")
+        is_thau = (ratings_df["class"] == "Thaumiel")
+        ratings_df.loc[is_safe, "class"] = "Big round"
+        ratings_df.loc[is_euclid, "class"] = "Round"
+        ratings_df.loc[is_keter, "class"] = "Kind of round"
+        ratings_df.loc[is_neut, "class"] = "Omelet"
+        ratings_df.loc[is_thau, "class"] = "Carton"
+        ratings_df["full title"] = "SCP-Big egg"
+        hover_data2 = {"series": False}
 
     fig2 = px.scatter(
         ratings_df.dropna(subset=["rating"]),
@@ -154,10 +167,10 @@ def make_figures(current_mode):
         size="rating",
         color="class",
         color_discrete_sequence=px.colors.qualitative.Bold,
-        hover_name="code",
+        hover_name="full title",
         animation_frame="series",
-        hover_data = {"series":False},
-        category_orders={"class": ["Neutralized", "Thaumiel", "Safe", "Euclid", "Keter", "Other"]},
+        hover_data = hover_data2,
+        category_orders={"class": ["Neutralized", "Thaumiel", "Safe", "Euclid", "Keter", "Omelet", "Carton", "Big round", "Round", "Kind of round", "Other"]},
         log_x=True,
         size_max=60,
         title= title2,
@@ -165,7 +178,6 @@ def make_figures(current_mode):
     )
     fig2.update_layout(xaxis_title=xtitle2)
     fig2.update_layout(yaxis_title=ytitle2)
-    #fig2.update_traces(hovertemplate=hovertempl2)
     graph2 = dcc.Graph(
         figure=fig2,
         className="border",
