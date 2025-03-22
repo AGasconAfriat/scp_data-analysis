@@ -113,8 +113,8 @@ def make_figures(current_mode):
         primary_classes_df.loc[is_euclid, "class"] = "Round"
         primary_classes_df.loc[is_keter, "class"] = "Kind of round"
         primary_classes=["Big round", "Round", "Kind of round"]
-        primary_classes_df.rename(columns={"series": "yolk acidity"}, inplace=True)
-        series_name = "yolk acidity"
+        primary_classes_df.rename(columns={"series": "yolk ph"}, inplace=True)
+        series_name = "yolk ph"
     class_counts = primary_classes_df.groupby(["class", series_name]).count().reset_index()
     fig1 = px.histogram(class_counts, x="class", y="code", color=series_name, color_discrete_sequence=px.colors.sequential.Plasma_r, barmode="group",
                   title=title1, template=TEMPLATE)
@@ -183,6 +183,7 @@ def make_figures(current_mode):
         title3 = "Quantity of black rectangles (█ character) per article"
         xtitle3 = "class"
         ycol3 = "black rectangles"
+        series_name = "series"
     else:
         title3 = "Quantity of brown eggs per carton"
         xtitle3 = "roundness"
@@ -192,20 +193,21 @@ def make_figures(current_mode):
         black_df.loc[is_safe, "class"] = "Big round"
         black_df.loc[is_euclid, "class"] = "Round"
         black_df.loc[is_keter, "class"] = "Kind of round"
-        black_df.rename(columns={"black rectangles": "brown eggs"}, inplace=True)
+        black_df.rename(columns={"black rectangles": "brown eggs", "series": "yolk ph"}, inplace=True)
         black_df["full title"] = "SCP-Big egg"
         ycol3 = "brown eggs"
+        series_name = "yolk ph"
         
     fig3 = px.violin(
         black_df,
         y=ycol3,
         x="class",
-        color="series",
+        color=series_name,
         color_discrete_sequence=px.colors.sequential.Plasma_r,
         box=True,
         points="all",
         hover_name="full title",
-        hover_data={"class": False, "series": False},
+        hover_data={"class": False, series_name: False},
         title=title3,
         template=TEMPLATE,
     )
