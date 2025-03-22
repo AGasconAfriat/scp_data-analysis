@@ -10,6 +10,9 @@ import plotly.graph_objects as go
 import plotly.express as px
 import random
 
+last_mode = -1
+last_graphs = ""
+
 def contains_count(string, elements):
     count = 0
     for element in elements:
@@ -24,6 +27,7 @@ pd.set_option('display.max_colwidth', None)
 df = pd.read_csv("scp6999augmented.csv")
 df["length"]=df.apply(lambda row: len(row["text"]), axis=1)
 df["full title"]=df.apply(lambda row: get_code_plus_title(row["code"], row["title"]), axis=1)
+current_df = df
 
 dbc_css = (
     "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@V1.0.1/dbc.min.css"
@@ -231,7 +235,7 @@ def make_figures(current_mode, current_df):
     top_rated_df["amount"] = top_rated_df["amount"]//10
     top_rated_df["category"] = "rating (tens of points)"
     
-    most_refs_df = df.sort_values(by="mentions", ascending=False).head()[["full title", "mentions"]]
+    most_refs_df = current_df.sort_values(by="mentions", ascending=False).head()[["full title", "mentions"]]
     most_refs_df["rank"] = range(1, len(top_rated_df) + 1)
     most_refs_df.rename(columns={"mentions": "amount", "full title": "title"}, inplace=True)
     most_refs_df["category"] = "mentions"
@@ -273,16 +277,22 @@ def make_figures(current_mode, current_df):
      Input('interval-component', 'n_intervals')]
 )
 def update_dashboard(current_mode, n):
-    if "current_df" not in locals():
-        current_df = df
+    global current_df
+    global last_mode
+    global last_graphs
     if current_mode != 1: #default or big egg mode
-        if ("last_mode" not in locals()) or (last_mode != current_mode):
+        if (last_mode != current_mode):
             last_mode = current_mode
             last_graphs = make_figures(current_mode, df)
         return last_graphs
     else: #antimemetic mode
-        to_drop = random.sample(list(current_df.index), math.ceil(len(current_df)/2))
-        current_df.drop(to_drop)
+        # antimemetic mode causes the dashboard to "forget" data progressively until exactly 5 SCPs remain
+        if len(current_df > 10)
+            to_drop = random.sample(list(current_df.index), math.ceil(len(current_df)/10))
+        else:
+            to_drop = random.sample(list(current_df.index), len(current_df) - 5)
+        current_df = current_df.drop(to_drop)
+        print(n, len(current_df))
         return make_figures(current_mode, current_df)
 
 app.layout = dbc.Container(
@@ -296,7 +306,7 @@ app.layout = dbc.Container(
         dbc.Row(dbc.Col(links)),
         dcc.Interval(
             id='interval-component',
-            interval=10*1000,  # in milliseconds
+            interval=1*1000,  # in milliseconds
             n_intervals=0
         )
     ],
