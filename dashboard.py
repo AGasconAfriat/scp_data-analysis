@@ -198,7 +198,8 @@ def make_figures(current_mode):
         color_discrete_sequence=px.colors.sequential.Plasma_r,
         box=True,
         points="all",
-        hover_data={"code":True, "title":True, "class": False, "series": False},
+        hover_name="full title",
+        hover_data={"class": False, "series": False},
         title=title3,
         template=TEMPLATE,
     )
@@ -225,13 +226,12 @@ def make_figures(current_mode):
     most_refs_df.rename(columns={"mentions": "amount", "full title": "title"}, inplace=True)
     most_refs_df["category"] = "mentions"
     
-    longest_df = df.sort_values(by="length", ascending=False).head()[["code", "title", "length"]]
-    longest_df["title"] = longest_df.apply(lambda row: get_code_plus_title(row["code"], row["title"]), axis=1)
+    longest_df = df.sort_values(by="length", ascending=False).head()[["full title", "length"]]
     longest_df["rank"] = range(1, len(top_rated_df) + 1)
-    longest_df.pop("code")
     longest_df.rename(columns={"length": "amount"}, inplace=True)
     longest_df["amount"] = longest_df["amount"]//100
     longest_df["category"] = "article length (hundreds of characters)"
+    longest_df.rename(columns={"full title": "title"}, inplace=True)
     
     top5_df = pd.DataFrame(columns=['category', 'title', 'amount', 'rank'])
     top5_df = pd.concat([top5_df, top_rated_df, longest_df, most_refs_df], ignore_index=True)
