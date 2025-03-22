@@ -286,6 +286,8 @@ def update_dashboard(current_mode, n):
             last_graphs = make_figures(current_mode, df)
         return last_graphs
     else: #antimemetic mode
+        if last_mode != 1:
+            current_df = df
         # antimemetic mode causes the dashboard to "forget" data progressively until exactly 5 SCPs remain
         if len(current_df) > 10:
             to_drop = random.sample(list(current_df.index), math.ceil(len(current_df)/10))
@@ -293,6 +295,7 @@ def update_dashboard(current_mode, n):
             to_drop = random.sample(list(current_df.index), len(current_df) - 5)
         current_df = current_df.drop(to_drop)
         print(n, len(current_df))
+        last_mode = current_mode
         return make_figures(current_mode, current_df)
 
 app.layout = dbc.Container(
