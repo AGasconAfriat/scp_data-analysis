@@ -100,6 +100,7 @@ def make_figures(current_mode):
         ytitle1 = ""
         hovertempl1 = "Total SCPs: %{y}<extra></extra>"
         xtitle1 = "class"
+        series_name = "series"
     else:
         title1 = "Bigness and roundness"
         ytitle1 = "bigness"
@@ -112,8 +113,10 @@ def make_figures(current_mode):
         primary_classes_df.loc[is_euclid, "class"] = "Round"
         primary_classes_df.loc[is_keter, "class"] = "Kind of round"
         primary_classes=["Big round", "Round", "Kind of round"]
-    class_counts = primary_classes_df.groupby(["class", "series"]).count().reset_index()
-    fig1 = px.histogram(class_counts, x="class", y="code", color="series", color_discrete_sequence=px.colors.sequential.Plasma_r, barmode="group",
+        primary_classes_df.rename(columns={"series": "yolk acidity"}, inplace=True)
+        series_name = "yolk acidity"
+    class_counts = primary_classes_df.groupby(["class", series_name]).count().reset_index()
+    fig1 = px.histogram(class_counts, x="class", y="code", color=series_name, color_discrete_sequence=px.colors.sequential.Plasma_r, barmode="group",
                   title=title1, template=TEMPLATE)
     fig1.update_xaxes(categoryorder="array", categoryarray=primary_classes)
     fig1.update_layout(yaxis_title=ytitle1)
@@ -139,12 +142,10 @@ def make_figures(current_mode):
         title2 = "Overview of SCP article length, rating and mentions in other articles"
         xtitle2 = "length (in characters)"
         ytitle2 = "mentions"
-        #hovertempl2 = "" #Total SCPs: %{y}<extra></extra>
     else:
         title2 = "Big egg"
         xtitle2 = "bigness"
         ytitle2 = "yolk"
-        #hovertempl2 = ""
 
     fig2 = px.scatter(
         ratings_df.dropna(subset=["rating"]),
