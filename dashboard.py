@@ -309,7 +309,7 @@ app.layout = dbc.Container(
         dbc.Row(dbc.Col(links)),
         dcc.Interval(
             id='interval-component',
-            interval=1*1000,  # in milliseconds
+            interval=10*1000,  # in milliseconds
             n_intervals=0
         )
     ],
