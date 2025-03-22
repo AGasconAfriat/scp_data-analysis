@@ -139,10 +139,12 @@ def make_figures(current_mode):
         title2 = "Overview of SCP article length, rating and mentions in other articles"
         xtitle2 = "length (in characters)"
         ytitle2 = "mentions"
+        #hovertempl2 = "" #Total SCPs: %{y}<extra></extra>
     else:
         title2 = "Big egg"
         xtitle2 = "bigness"
         ytitle2 = "yolk"
+        #hovertempl2 = ""
 
     fig2 = px.scatter(
         ratings_df.dropna(subset=["rating"]),
@@ -162,6 +164,7 @@ def make_figures(current_mode):
     )
     fig2.update_layout(xaxis_title=xtitle2)
     fig2.update_layout(yaxis_title=ytitle2)
+    #fig2.update_traces(hovertemplate=hovertempl2)
     graph2 = dcc.Graph(
         figure=fig2,
         className="border",
@@ -177,11 +180,10 @@ def make_figures(current_mode):
 
     if current_mode !=2:
         title3 = "Quantity of black rectangles (█ character) per article"
-        ytitle3 = "black rectangles"
         xtitle3 = "class"
+        ycol3 = "black rectangles"
     else:
         title3 = "Quantity of brown eggs per carton"
-        ytitle3 = "brown eggs"
         xtitle3 = "roundness"
         is_safe = (black_df["class"] == "Safe")
         is_euclid = (black_df["class"] == "Euclid")
@@ -189,10 +191,13 @@ def make_figures(current_mode):
         black_df.loc[is_safe, "class"] = "Big round"
         black_df.loc[is_euclid, "class"] = "Round"
         black_df.loc[is_keter, "class"] = "Kind of round"
+        black_df.rename(columns={"black rectangles": "brown eggs"}, inplace=True)
+        black_df["full title"] = "SCP-Big egg"
+        ycol3 = "brown eggs"
         
     fig3 = px.violin(
         black_df,
-        y="black rectangles",
+        y=ycol3,
         x="class",
         color="series",
         color_discrete_sequence=px.colors.sequential.Plasma_r,
@@ -203,8 +208,6 @@ def make_figures(current_mode):
         title=title3,
         template=TEMPLATE,
     )
-
-    fig3.update_layout(yaxis_title=ytitle3)
     fig3.update_layout(xaxis_title=xtitle3)
     fig3.update_xaxes(categoryorder="array", categoryarray=primary_classes)
     
