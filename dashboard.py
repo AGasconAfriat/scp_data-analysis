@@ -294,7 +294,6 @@ def update_dashboard(current_mode, n):
         else:
             to_drop = random.sample(list(current_df.index), len(current_df) - 5)
         current_df = current_df.drop(to_drop)
-        print(n, len(current_df))
         last_mode = current_mode
         return make_figures(current_mode, current_df)
 
