@@ -18,7 +18,7 @@ Famous examples of SCPs include:
 
 This project contains a humorous report about SCP-2602, a former library, as well as a script for displaying SCP data in the form of an interactive dashboard.
 
-TODO add screenshot of dashboard
+![The upper part of a dashboard titled SCP Status, featuring a mode selection dropdown menu and four charts.](visual_samples/2025-03-27_TwoColumns.png)
 
 ## Files
 
@@ -30,8 +30,6 @@ TODO add screenshot of dashboard
 * `visualizations.py`: A script used to manipulate the data and experiment with creating visualizations for the dashboard.
 
 ### Files Showing the Dashboard
-
-TODO
 
 The `visual_samples` folder contains screen captures of the dashboard.
 
@@ -74,7 +72,7 @@ Run `dashboard.py`. Its output should specify which port it is running on.
 Example with port 8050:
 
 ```
- * Serving Flask app 'step2_run_dashboard'
+ * Serving Flask app 'dashboard'
  * Debug mode: off
  * Running on http://127.0.0.1:8050
 ```
@@ -86,10 +84,3 @@ Example with port 8050:
 - [Theme demo](https://github.com/AnnMarieW/dash-bootstrap-templates/blob/main/examples/demo_theme_change_4_graphs.py) by Tuomas Poukkula: Bootstrap template.
 - [Dash Bootstrap Templates](https://pypi.org/project/dash-bootstrap-templates/0.1.1/)
 - [Plotly Templates](https://plotly.com/python/templates/)
-
-## TODO
-
-TODO
-
-Not yet implemented:
-- Make the dashboard responsive (display charts above each other instead of next to each other on a smaller screen)

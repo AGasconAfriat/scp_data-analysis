@@ -86,8 +86,6 @@ links = html.Div(
 )
 
 def make_figures(current_mode, current_df):
-    #if current_mode != 1:
-    #    current_df = df #resets the df in case antimemetic mode was previously enabled
     # Graph 1 : Distribution of SCPs by containment class by series ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
     primary_classes=["Safe", "Euclid", "Keter"]
     primary_classes_df = current_df[current_df["class"].isin(primary_classes)]
@@ -317,4 +315,4 @@ app.layout = dbc.Container(
 )
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)
